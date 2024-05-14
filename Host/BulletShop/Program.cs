@@ -1,26 +1,41 @@
+using ApplicationServices;
 using ApplicationServices.Services;
 using Core.AutoMapper;
+using Core.Interfaces;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using DatabaseCatalog;
 using DatabaseCatalog.Repositories;
-using Microsoft.AspNetCore.Hosting;
+using Host;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
-// Add services to the container.
+builder.Services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+
+builder.Services.AddScoped<IUserService, UserService>();
+
+//builder.Services.AddScoped<PasswordHasher>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddAutoMapper(typeof(FromWeaponToWeaponProductViewModelMapper));
 
 // --- Services ---
 
 builder.Services.AddScoped<IWeaponService, WeaponService>();
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<IMyPasswordHasher, MyPasswordHasher>();
 
 // --- Interfaces ---
 
@@ -42,10 +57,27 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+
 app.UseHttpsRedirection();
+app.UseRouting();
+
+
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Strict,
+    HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
+    Secure = CookieSecurePolicy.Always
+});
+
 
 app.UseAuthorization();
+app.UseAuthentication();
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    /*endpoints.MapUsersEndpoints();*/ // Your custom endpoints
+});
 
 app.Run();

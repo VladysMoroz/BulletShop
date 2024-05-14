@@ -1,7 +1,10 @@
-﻿using AutoMapper;
+﻿using ApplicationServices.Services;
+using AutoMapper;
 using Core.Entities;
 using Core.Interfaces.Services;
 using Core.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -52,6 +55,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpDelete("id", Name = "DeleteWeapon")]
+        [Authorize]
         public async Task<IActionResult> DeleteWeaponAsync(int id)
         {
             await _weaponService.DeleteAsync(id);
