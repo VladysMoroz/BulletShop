@@ -13,6 +13,7 @@ namespace DatabaseCatalog
 
         public DbSet<Product> Products { get; set; }
         public DbSet<Weapon> Weapons { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,6 +21,7 @@ namespace DatabaseCatalog
             modelBuilder.ApplyConfiguration(new CategoryEntityConfiguration());
             modelBuilder.ApplyConfiguration(new SubCategoryEntityConfiguration());
             modelBuilder.ApplyConfiguration(new WeaponEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
         }
     }
 }
