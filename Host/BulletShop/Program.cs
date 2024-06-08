@@ -1,83 +1,77 @@
-using ApplicationServices;
 using ApplicationServices.Services;
-using Core.AutoMapper;
-using Core.Interfaces;
+using Core.AutoMapper.AmmunitionMappers;
+using Core.AutoMapper.BulletMappers;
+using Core.AutoMapper.ColdWeaponMapper;
+using Core.AutoMapper.OpticMappers;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using DatabaseCatalog;
 using DatabaseCatalog.Repositories;
-using Host;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
-builder.Services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
+
 
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IJwtProvider, JwtProvider>();
-
-builder.Services.AddScoped<IUserService, UserService>();
-
-//builder.Services.AddScoped<PasswordHasher>();
-
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-builder.Services.AddAutoMapper(typeof(FromWeaponToWeaponProductViewModelMapper));
-
-// --- Services ---
+// SERVICES
 
 builder.Services.AddScoped<IWeaponService, WeaponService>();
+builder.Services.AddScoped<IColdWeaponService, ColdWeaponService>();
+builder.Services.AddScoped<IOpticService, OpticService>();
+builder.Services.AddScoped<IBulletService, BulletService>();
+builder.Services.AddScoped<IAmmunitionService, AmmunitionService>();
 
-builder.Services.AddHttpContextAccessor();
+// --------
 
-builder.Services.AddScoped<IMyPasswordHasher, MyPasswordHasher>();
-
-// --- Interfaces ---
+// REPOSITORIES
 
 builder.Services.AddScoped<IWeaponRepository, WeaponRepository>();
+builder.Services.AddScoped<IColdWeaponRepository, ColdWeaponRepository>();
+builder.Services.AddScoped<IOpticRepository, OpticRepository>();
+builder.Services.AddScoped<IBulletRepository, BulletRepository>();
+builder.Services.AddScoped<IAmmunitionRepository, AmmunitionRepository>();
 
-// ------------------
+// ---------
+
+builder.Services.AddAutoMapper(
+     typeof(FromAmmunitionToAmmunitionViewModelMapper)
+    ,typeof(FromColdWeaponToColdWeaponViewModelMapper)
+    ,typeof(FromOpticToOpticViewModelMapper)
+    ,typeof(FromBulletToBulletViewModelMapper));
+//builder.Services.AddAutoMapper(typeof());
+
+//builder.Services.AddScoped<IMyPasswordHasher, MyPasswordHasher>();
 
 builder.Services.AddDbContext<CatalogDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
 });
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-
-
 app.UseHttpsRedirection();
 app.UseRouting();
 
 
-app.UseCookiePolicy(new CookiePolicyOptions
-{
-    MinimumSameSitePolicy = SameSiteMode.Strict,
-    HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
-    Secure = CookieSecurePolicy.Always
-});
-
-
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
-    /*endpoints.MapUsersEndpoints();*/ // Your custom endpoints
 });
 
 app.Run();

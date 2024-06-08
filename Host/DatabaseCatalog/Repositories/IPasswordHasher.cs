@@ -1,8 +1,8 @@
 ﻿namespace Core.Interfaces
 {
-    public interface IPasswordHasher
-    {
-        string Generate(string password);
-        bool Verify(string password, string hashedPassword);
-    }
+    //public interface IPasswordHasher
+    //{
+    //    string Generate(string password);
+    //    bool Verify(string password, string hashedPassword);
+    //}
 }
