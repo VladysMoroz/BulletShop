@@ -36,6 +36,8 @@ namespace DatabaseCatalog.Configurations
 
             builder.Property(pr => pr.OrderId).HasDefaultValue(0);
 
+            builder.Property(pr => pr.CreationTime).HasDefaultValueSql("GETUTCDATE()").IsRequired();
+
             builder.HasOne(pr => pr.SubCategory)
                    .WithMany(sc => sc.Products)
                    .HasForeignKey(pr => pr.SubCategoryId);

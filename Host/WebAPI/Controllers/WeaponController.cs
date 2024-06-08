@@ -1,10 +1,8 @@
-﻿using ApplicationServices.Services;
-using AutoMapper;
+﻿using AutoMapper;
 using Core.Entities;
 using Core.Interfaces.Services;
 using Core.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -23,9 +21,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost(Name = "AddWeapon")]
-        public async Task<IActionResult> CreateWeaponAsync([FromBody] WeaponProductViewModel productWeapon)
+        public async Task<IActionResult> CreateWeaponAsync([FromBody] WeaponViewModel productWeapon)
         {
-            var weapons = _mapper.Map<WeaponProductViewModel, Weapon>(productWeapon);
+            var weapons = _mapper.Map<WeaponViewModel, Weapon>(productWeapon);
 
             var dbWeapon = await _weaponService.CreateAsync(weapons);
 
@@ -37,16 +35,16 @@ namespace WebAPI.Controllers
         {
             var weapons = await _weaponService.GetAllAsync();
 
-            var weaponViewModels = _mapper.Map<List<Weapon>, List<WeaponProductViewModel>>(weapons);
+            var weaponViewModels = _mapper.Map<List<Weapon>, List<WeaponViewModel>>(weapons);
             return Ok(weaponViewModels);
         }
 
 
         [HttpPut("{id}", Name = "UpdateWeapon")]
-        public async Task<IActionResult> UpdateWeaponAsync(int id, [FromBody] WeaponProductViewModel productWeapon)
+        public async Task<IActionResult> UpdateWeaponAsync(int id, [FromBody] WeaponViewModel productWeapon)
         {
 
-            var weapons = _mapper.Map<WeaponProductViewModel, Weapon>(productWeapon);
+            var weapons = _mapper.Map<WeaponViewModel, Weapon>(productWeapon);
             
 
             var updatedWeapon = await _weaponService.UpdateAsync(id, weapons);
@@ -54,8 +52,7 @@ namespace WebAPI.Controllers
             return Ok(updatedWeapon);
         }
 
-        [HttpDelete("id", Name = "DeleteWeapon")]
-        [Authorize]
+        [HttpDelete("id", Name = "DeleteWeapon")] 
         public async Task<IActionResult> DeleteWeaponAsync(int id)
         {
             await _weaponService.DeleteAsync(id);

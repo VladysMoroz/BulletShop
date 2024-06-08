@@ -23,12 +23,21 @@ namespace Core.Entities
         public decimal Price { get; set; }
         public int OrderId { get; set; }
         public int SubCategoryId { get; set; }
+        public DateTime CreationTime { get; set; } = DateTime.UtcNow;
 
         // ---- NAVIGATION PROPERTIES
         [JsonIgnore]
         public Weapon Weapon { get; set; }
         [JsonIgnore]
         public SubCategory SubCategory { get; set; }
+        [JsonIgnore]
+        public ColdWeapon ColdWeapon { get; set; }
+        [JsonIgnore]
+        public Optic Optic { get; set; }
+        [JsonIgnore]
+        public Bullet Bullet { get; set; }
+        [JsonIgnore]
+        public Ammunition Ammunition { get; set; }
 
     }
 }
